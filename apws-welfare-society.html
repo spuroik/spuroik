@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APWS Welfare Society • All Puroik Welfare Society</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { font-family: 'Inter', system_ui, sans-serif; }
+    .page { display: none; }
+    .page.active { display: block; animation: fadeIn 0.35s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .nav-link.active { color: #4338ca; font-weight: 600; position: relative; }
+    .nav-link.active:after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: #6366f1; border-radius: 2px; }
+    .modal-backdrop { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); }
+    .toast { animation: toastPop 0.3s ease forwards; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="showPage('home')">
+        <div class="w-10 h-10 bg-indigo-700 text-white rounded-2xl flex items-center justify-center">
+          <i class="fa-solid fa-hands-helping text-xl"></i>
+        </div>
+        <div>
+          <span class="font-bold text-2xl text-indigo-900">APWS</span>
+          <span class="text-xs text-slate-500 block -mt-1">All Puroik Welfare Society</span>
+        </div>
+      </div>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+        <button onclick="showPage('home')" class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100" id="nav-home">Home</button>
+        <button onclick="showPage('about')" class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100" id="nav-about">About</button>
+        <button onclick="showPage('services')" class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100" id="nav-services">Services</button>
+        <button onclick="showPage('notices')" class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100" id="nav-notices">Notices</button>
+        <!-- Resources Dropdown (Click to open) -->
+        <div class="relative hidden md:block">
+          <button onclick="toggleResourcesDropdown()" class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100 flex items-center gap-1">
+            Resources <i class="fa-solid fa-chevron-down text-xs"></i>
+          </button>
+          <div id="resourcesDropdown" class="hidden absolute bg-white border rounded-2xl shadow-lg mt-1 w-48 py-2 z-50">
+            <button onclick="showPage('rights'); hideResourcesDropdown()" class="block w-full text-left px-4 py-2 hover:bg-slate-50 text-sm">Know Your Rights</button>
+            <button onclick="showPage('faqs'); hideResourcesDropdown()" class="block w-full text-left px-4 py-2 hover:bg-slate-50 text-sm">FAQs</button>
+          </div>
+        </div>
+
+      <button onclick="showPage('gallery')" class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100" id="nav-gallery">Gallery</button>
+      <button onclick="showPage('contact')" class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100" id="nav-contact">Contact</button>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <button onclick="toggleMobileMenu()" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600">
+          <i class="fa-solid fa-bars text-xl" id="menu-icon"></i>
+        </button>
+
+        <button onclick="openComplaintModal()" class="bg-red-600 text-white px-5 py-2 rounded-3xl text-sm font-semibold flex items-center gap-2">
+          <i class="fa-solid fa-exclamation-triangle"></i> <span class="hidden sm:inline">Complaint</span>
+        </button>
+        <button onclick="openStudentModal()" class="bg-amber-400 text-slate-900 px-5 py-2 rounded-3xl text-sm font-semibold flex items-center gap-2">
+          <i class="fa-solid fa-graduation-cap"></i> <span class="hidden sm:inline">Scholarship</span>
+        </button>
+        <button onclick="openAdminModal()" class="bg-slate-900 text-white px-5 py-2 rounded-3xl text-sm font-semibold flex items-center gap-2">
+          <i class="fa-solid fa-user-shield"></i> <span class="hidden sm:inline">Admin</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden border-t px-6 py-2 bg-white">
+      <div class="flex flex-col text-sm">
+        <button onclick="showPage('home');toggleMobileMenu()" class="py-3 text-left">Home</button>
+        <button onclick="showPage('about');toggleMobileMenu()" class="py-3 text-left">About Us</button>
+        <button onclick="showPage('services');toggleMobileMenu()" class="py-3 text-left">Services</button>
+        <button onclick="showPage('notices');toggleMobileMenu()" class="py-3 text-left">Notices</button>
+        <button onclick="showPage('gallery');toggleMobileMenu()" class="py-3 text-left">Gallery</button>
+        <button onclick="showPage('rights');toggleMobileMenu()" class="py-3 text-left">Know Your Rights</button>
+        <button onclick="showPage('faqs');toggleMobileMenu()" class="py-3 text-left">FAQs</button>
+        <button onclick="showPage('contact');toggleMobileMenu()" class="py-3 text-left">Contact</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE: HOME -->
+  <div id="page-home" class="page active">
+    <section class="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-800 text-white pt-16 pb-20">
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="inline-block bg-white/10 px-4 py-1 rounded-full text-sm mb-6">Est. 1997 • Arunachal Pradesh</div>
+          <h1 class="text-5xl md:text-6xl font-bold leading-none tracking-tighter">APWS Welfare Society<br>Digital Helpdesk</h1>
+          <p class="mt-6 text-lg text-blue-100 max-w-md">Transparent platform for public notices, grievance support, and student scholarships.</p>
+          <div class="mt-8 flex gap-4">
+            <button onclick="showPage('notices')" class="bg-white text-indigo-900 px-8 py-3 rounded-3xl font-semibold">View Notices</button>
+            <button onclick="openComplaintModal()" class="border border-white/40 px-8 py-3 rounded-3xl font-semibold">Lodge Complaint</button>
+          </div>
+        </div>
+        <div class="bg-white/10 border border-white/20 rounded-3xl p-8">
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div class="bg-white rounded-3xl p-5"><div class="text-xs text-slate-500">NOTICES</div><div id="heroNoticesCount" class="text-4xl font-bold text-indigo-700">0</div></div>
+            <div class="bg-white rounded-3xl p-5"><div class="text-xs text-slate-500">COMPLAINTS</div><div id="heroComplaintsCount" class="text-4xl font-bold text-red-600">0</div></div>
+            <div class="bg-white rounded-3xl p-5"><div class="text-xs text-slate-500">APPLICATIONS</div><div id="heroScholarshipsCount" class="text-4xl font-bold text-amber-600">0</div></div>
+          </div>
+
+          <!-- Impact Numbers -->
+          <div class="mt-6 pt-6 border-t border-white/20 grid grid-cols-3 gap-4 text-center text-sm">
+            <div>
+              <div class="text-2xl font-bold">150+</div>
+              <div class="text-xs text-blue-200">People Supported</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold">89</div>
+              <div class="text-xs text-blue-200">Scholarships Given</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold">42</div>
+              <div class="text-xs text-blue-200">Cases Resolved</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PAGE: ABOUT -->
+  <div id="page-about" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <h1 class="text-4xl font-bold">About APWS</h1>
+      <p class="mt-4 text-slate-600 max-w-2xl">All Puroik Welfare Society works for community welfare, education support, and social justice in Arunachal Pradesh since 1997.</p>
+
+      <div class="grid md:grid-cols-2 gap-6 mt-10">
+        <div class="bg-white border rounded-3xl p-8">
+          <h3 class="font-bold text-xl">Our Mission</h3>
+          <p class="mt-3 text-slate-600">Support disadvantaged communities through welfare, education, and legal awareness.</p>
+        </div>
+        <div class="bg-white border rounded-3xl p-8">
+          <h3 class="font-bold text-xl">Our Vision</h3>
+          <p class="mt-3 text-slate-600">A transparent and inclusive society where every voice is heard.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border-t py-12">
+      <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl font-bold mb-8">Leadership &amp; Executive Committee</h2>
+        <div id="leadershipGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: SERVICES -->
+  <div id="page-services" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <h1 class="text-4xl font-bold mb-8">Our Services</h1>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white border rounded-3xl p-8">
+          <div class="text-red-600 text-3xl mb-4"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3 class="text-2xl font-bold">Complaint Support</h3>
+          <p class="mt-3 text-slate-600">Lodge confidential complaints about harassment, land issues, bonded labour, etc.</p>
+          <button onclick="openComplaintModal()" class="mt-5 text-red-600 font-semibold">Submit Complaint →</button>
+        </div>
+        <div class="bg-white border rounded-3xl p-8">
+          <div class="text-amber-600 text-3xl mb-4"><i class="fa-solid fa-graduation-cap"></i></div>
+          <h3 class="text-2xl font-bold">Scholarship Portal</h3>
+          <p class="mt-3 text-slate-600">Apply for financial assistance for higher education.</p>
+          <button onclick="openStudentModal()" class="mt-5 text-amber-600 font-semibold">Apply Now →</button>
+        </div>
+        <div class="bg-white border rounded-3xl p-8">
+          <div class="text-indigo-600 text-3xl mb-4"><i class="fa-solid fa-bullhorn"></i></div>
+          <h3 class="text-2xl font-bold">Public Notices</h3>
+          <p class="mt-3 text-slate-600">View official announcements and community updates.</p>
+          <button onclick="showPage('notices')" class="mt-5 text-indigo-600 font-semibold">Browse Notices →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: NOTICES -->
+  <div id="page-notices" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <div class="flex justify-between items-end mb-8">
+        <div>
+          <h1 class="text-4xl font-bold">Public Notice Board</h1>
+          <p class="text-slate-500">Latest official announcements</p>
+        </div>
+        <button onclick="openAdminModal()" class="text-indigo-600 flex items-center gap-2"><i class="fa-solid fa-lock"></i> Admin Access</button>
+      </div>
+      <div id="noticesList" class="grid md:grid-cols-2 gap-5"></div>
+    </div>
+  </div>
+
+  <!-- PAGE: GALLERY -->
+  <div id="page-gallery" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <h1 class="text-4xl font-bold mb-8">Gallery</h1>
+      <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+    </div>
+  </div>
+
+  <!-- PAGE: KNOW YOUR RIGHTS -->
+  <div id="page-rights" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <div class="max-w-3xl">
+        <h1 class="text-4xl font-bold">Know Your Rights</h1>
+        <p class="mt-4 text-slate-600">Information for members of the Puroik community and others who may have faced bonded labour or exploitation.</p>
+      </div>
+
+      <div class="mt-10 grid md:grid-cols-2 gap-6">
+        <!-- Card 1 -->
+        <div class="bg-white border rounded-3xl p-8">
+          <h3 class="font-bold text-xl flex items-center gap-2">
+            <i class="fa-solid fa-balance-scale text-indigo-600"></i> 
+            Your Legal Rights
+          </h3>
+          <ul class="mt-4 space-y-3 text-sm text-slate-600">
+            <li class="flex gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> Bonded labour is illegal under the Bonded Labour System (Abolition) Act, 1976.</li>
+            <li class="flex gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> No person can be forced to work to repay a debt.</li>
+            <li class="flex gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> You have the right to freedom, fair wages, and dignity.</li>
+            <li class="flex gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> Children have the right to education and cannot be made to work.</li>
+          </ul>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-white border rounded-3xl p-8">
+          <h3 class="font-bold text-xl flex items-center gap-2">
+            <i class="fa-solid fa-handshake text-emerald-600"></i> 
+            How to Get Help
+          </h3>
+          <div class="mt-4 space-y-4 text-sm">
+            <div>
+              <p class="font-medium">1. Lodge a Confidential Complaint</p>
+              <p class="text-slate-600">Use the <span class="font-semibold">"Complaint"</span> button on this website. Your complaint will be seen only by the APWS Executive Committee.</p>
+            </div>
+            <div>
+              <p class="font-medium">2. Contact Local Authorities</p>
+              <p class="text-slate-600">You can also approach the District Magistrate, Police, or Labour Department.</p>
+            </div>
+            <div>
+              <p class="font-medium">3. Reach Out to APWS</p>
+              <p class="text-slate-600">Our team is here to support you with legal guidance and rehabilitation support.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 bg-indigo-50 border border-indigo-100 rounded-3xl p-8">
+        <h3 class="font-bold text-xl">Important Message</h3>
+        <p class="mt-3 text-slate-700">If you or someone you know is still facing any form of bonded labour or exploitation, you are not alone. APWS is committed to helping the Puroik community regain their rights and live with dignity. Taking the first step by reporting can bring change not only for you but for many others.</p>
+        
+        <button onclick="openComplaintModal()" class="mt-6 bg-indigo-700 text-white px-6 py-3 rounded-3xl font-semibold">
+          Lodge Confidential Complaint Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: FAQs -->
+  <div id="page-faqs" class="page">
+    <div class="max-w-4xl mx-auto px-6 py-12">
+      <h1 class="text-4xl font-bold mb-2">Frequently Asked Questions</h1>
+      <p class="text-slate-500 mb-8">Common questions about our services and your rights</p>
+
+      <div class="space-y-4">
+        <div class="bg-white border rounded-2xl p-6">
+          <h3 class="font-semibold">How do I lodge a complaint?</h3>
+          <p class="mt-2 text-sm text-slate-600">Click on the red "Complaint" button at the top. Fill the form. Your complaint will only be visible to the APWS Executive Committee.</p>
+        </div>
+
+        <div class="bg-white border rounded-2xl p-6">
+          <h3 class="font-semibold">Is my complaint confidential?</h3>
+          <p class="mt-2 text-sm text-slate-600">Yes. All complaints are handled confidentially and shared only with the executive committee members.</p>
+        </div>
+
+        <div class="bg-white border rounded-2xl p-6">
+          <h3 class="font-semibold">Who can apply for scholarship?</h3>
+          <p class="mt-2 text-sm text-slate-600">Students from underprivileged backgrounds, especially from the Puroik community, can apply through the Scholarship Portal.</p>
+        </div>
+
+        <div class="bg-white border rounded-2xl p-6">
+          <h3 class="font-semibold">What if I was forced into bonded labour?</h3>
+          <p class="mt-2 text-sm text-slate-600">Bonded labour is illegal. You can lodge a confidential complaint using this website or contact APWS directly. We will support you with legal guidance.</p>
+        </div>
+
+        <div class="bg-white border rounded-2xl p-6">
+          <h3 class="font-semibold">How long does it take to get a response?</h3>
+          <p class="mt-2 text-sm text-slate-600">The committee usually reviews complaints and applications within 7–15 days.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: CONTACT -->
+  <div id="page-contact" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <h1 class="text-4xl font-bold">Contact Us</h1>
+      <p class="mt-4 text-slate-600">Use the forms available on this website for complaints and scholarship applications.</p>
+      <div class="mt-8">
+        <button onclick="openComplaintModal()" class="bg-red-600 text-white px-6 py-3 rounded-3xl mr-3">Lodge Complaint</button>
+        <button onclick="openStudentModal()" class="bg-amber-400 text-slate-900 px-6 py-3 rounded-3xl">Apply Scholarship</button>
+      </div>
+
+      <!-- Emergency Helpline -->
+      <div class="mt-10 bg-red-50 border border-red-200 rounded-3xl p-6">
+        <h3 class="font-bold text-red-700 flex items-center gap-2"><i class="fa-solid fa-phone"></i> Emergency Helpline</h3>
+        <div class="mt-3 text-sm space-y-1">
+          <p><strong>APWS Helpline:</strong> +91 94020 33708 (General Secretary)</p>
+          <p><strong>District Helpline:</strong> Contact your local District Magistrate or Police Station</p>
+          <p class="text-red-600 text-xs mt-2">If you are in immediate danger, please contact your nearest police station immediately.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-slate-900 text-slate-400 text-sm py-6 mt-10">
+    <div class="max-w-7xl mx-auto px-6">© 2026 All Puroik Welfare Society (APWS) • Regd. No. SR/ITA/893</div>
+  </footer>
+
+  <!-- Complaint Modal -->
+  <div id="complaintModal" class="fixed inset-0 hidden items-center justify-center modal-backdrop z-[60] p-4" onclick="if(event.target.id==='complaintModal') closeComplaintModal()">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white w-full max-w-2xl rounded-3xl overflow-hidden">
+      <div class="px-8 py-6 border-b flex justify-between">
+        <h3 class="text-2xl font-bold">Confidential Complaint Form</h3>
+        <button onclick="closeComplaintModal()" class="text-3xl">&times;</button>
+      </div>
+      <form onsubmit="submitComplaint(event)" class="p-8 space-y-5">
+        <div class="grid md:grid-cols-2 gap-5">
+          <div><label class="text-sm">Full Name (optional)</label><input id="complaintName" class="w-full border rounded-2xl px-4 py-3 mt-1"></div>
+          <div><label class="text-sm">Village / Area *</label><input id="complaintVillage" required class="w-full border rounded-2xl px-4 py-3 mt-1"></div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-5">
+          <div><label class="text-sm">Type *</label>
+            <select id="complaintType" required class="w-full border rounded-2xl px-4 py-3 mt-1">
+              <option value="">Select</option><option>Harassment</option><option>Land Issue</option><option>Domestic Violence</option>
+              <option>Scholarship Issue</option><option>Bonded Labour</option><option>Other</option>
+            </select>
+          </div>
+          <div><label class="text-sm">Phone (optional)</label><input id="complaintPhone" class="w-full border rounded-2xl px-4 py-3 mt-1"></div>
+        </div>
+        <div><label class="text-sm">Details *</label><textarea id="complaintDesc" rows="4" required class="w-full border rounded-2xl px-4 py-3 mt-1"></textarea></div>
+        <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-3xl font-semibold">Submit Complaint</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Student Modal -->
+  <div id="studentModal" class="fixed inset-0 hidden items-center justify-center modal-backdrop z-[60] p-4" onclick="if(event.target.id==='studentModal') closeStudentModal()">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white w-full max-w-lg rounded-3xl">
+      <div id="studentLoginView">
+        <div class="px-8 py-6 border-b"><h3 class="text-xl font-bold">Student Login</h3></div>
+        <div class="p-8">
+          <input id="studentUsername" value="student" class="w-full border rounded-2xl px-4 py-3 mb-3">
+          <input id="studentPassword" type="password" value="apws2026" class="w-full border rounded-2xl px-4 py-3 mb-4">
+          <button onclick="studentLogin()" class="w-full bg-amber-400 py-3 rounded-3xl font-semibold">Login</button>
+        </div>
+      </div>
+      <div id="studentApplicationView" class="hidden">
+        <div class="px-8 py-5 border-b"><h3 class="font-bold">Scholarship Application</h3></div>
+        <form onsubmit="submitScholarshipApplication(event)" class="p-8 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <input id="schName" placeholder="Full Name" required class="border rounded-2xl px-4 py-2">
+            <input id="schVillage" placeholder="Village" required class="border rounded-2xl px-4 py-2">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <input id="schCourse" placeholder="Course" required class="border rounded-2xl px-4 py-2">
+            <input id="schAmount" type="number" placeholder="Amount" required class="border rounded-2xl px-4 py-2">
+          </div>
+          <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-3xl">Submit Application</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" class="fixed inset-0 hidden items-center justify-center modal-backdrop z-[60] p-4" onclick="if(event.target.id==='adminModal') closeAdminModal()">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white w-full max-w-6xl rounded-3xl max-h-[92vh] flex flex-col">
+      <div id="adminLoginContent">
+        <div class="px-8 py-6 border-b"><h3 class="text-2xl font-bold">Admin Login</h3><p class="text-sm">Demo: admin / apws2026</p></div>
+        <div class="p-8 max-w-sm">
+          <input id="adminUsername" value="admin" class="w-full border rounded-2xl px-4 py-3 mb-3">
+          <input id="adminPassword" type="password" value="apws2026" class="w-full border rounded-2xl px-4 py-3 mb-4">
+          <button onclick="adminLogin()" class="w-full bg-indigo-700 text-white py-3 rounded-3xl">Login</button>
+        </div>
+      </div>
+
+      <div id="adminDashboardContent" class="hidden flex-1 flex flex-col min-h-0">
+        <div class="px-8 py-5 border-b flex justify-between bg-slate-50 flex-shrink-0">
+          <h3 class="font-bold text-xl">Admin Dashboard</h3>
+          <div>
+            <button onclick="adminLogout()" class="px-4 py-1.5 text-sm border rounded-2xl mr-2">Logout</button>
+            <button onclick="closeAdminModal()" class="px-4 py-1.5 text-sm bg-slate-900 text-white rounded-2xl">Close</button>
+          </div>
+        </div>
+
+        <!-- This div enables scrolling -->
+        <div class="flex-1 overflow-auto p-8 space-y-8 min-h-0">
+          <div class="grid grid-cols-3 gap-4">
+            <div class="bg-indigo-50 p-5 rounded-3xl"><div class="text-xs">Notices</div><div id="adminNoticesCount" class="text-4xl font-bold">0</div></div>
+            <div class="bg-red-50 p-5 rounded-3xl"><div class="text-xs">Complaints</div><div id="complaintsCount" class="text-4xl font-bold">0</div></div>
+            <div class="bg-amber-50 p-5 rounded-3xl"><div class="text-xs">Applications</div><div id="scholarshipsCount" class="text-4xl font-bold">0</div></div>
+          </div>
+
+          <div>
+            <h4 class="font-bold mb-3">Publish New Notice</h4>
+            <div class="bg-slate-50 p-5 rounded-3xl space-y-4">
+              <input id="newNoticeTitle" placeholder="Notice Title" class="w-full border rounded-2xl px-4 py-2.5">
+              <textarea id="newNoticeBody" rows="3" placeholder="Notice content..." class="w-full border rounded-2xl px-4 py-2.5"></textarea>
+              
+              <!-- File Upload -->
+              <div>
+                <label class="text-sm font-medium block mb-1">Attach PDF or Image (optional)</label>
+                <input type="file" id="noticeFile" accept=".pdf,.jpg,.jpeg,.png" 
+                       class="w-full text-sm border rounded-2xl px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-indigo-100 file:text-indigo-700">
+                <p class="text-xs text-slate-400 mt-1">Supported: PDF, JPG, PNG</p>
+              </div>
+
+              <button onclick="postNewNotice()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-8 py-2.5 rounded-3xl text-sm font-semibold">Publish Notice</button>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="font-bold mb-3">Manage Notices</h4>
+            <div id="adminNoticesList" class="space-y-2"></div>
+          </div>
+
+          <div>
+            <h4 class="font-bold mb-3">Complaints</h4>
+            <div id="adminComplaintsList" class="space-y-2"></div>
+          </div>
+
+          <div>
+            <h4 class="font-bold mb-3">Scholarship Applications</h4>
+            <div id="adminScholarshipsList" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Notice Modal -->
+  <div id="editNoticeModal" class="fixed inset-0 hidden items-center justify-center modal-backdrop z-[70] p-4" onclick="if(event.target.id==='editNoticeModal') closeEditNoticeModal()">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white w-full max-w-lg rounded-3xl p-8">
+      <h3 class="font-bold mb-4">Edit Notice</h3>
+      <input type="hidden" id="editNoticeId">
+      <input id="editNoticeTitle" class="w-full border rounded-2xl px-4 py-2 mb-3" placeholder="Title">
+      <textarea id="editNoticeBody" rows="4" class="w-full border rounded-2xl px-4 py-2 mb-4" placeholder="Content"></textarea>
+      <div class="flex gap-3">
+        <button onclick="saveEditedNotice()" class="flex-1 bg-indigo-700 text-white py-2 rounded-3xl">Save</button>
+        <button onclick="closeEditNoticeModal()" class="px-6 border rounded-3xl">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-[80]"></div>
+
+  <script>
+    // DATA
+    let notices = JSON.parse(localStorage.getItem('apws_notices')) || [
+      {id:1, title:"Genealogy Project Appointment Order", date:"17 Apr 2026", body:"Official appointment of field team members."},
+      {id:2, title:"Bonded Labour Awareness Campaign", date:"10 May 2026", body:"Awareness programme for labour rights in rural areas."}
+    ];
+    let complaints = JSON.parse(localStorage.getItem('apws_complaints')) || [];
+    let scholarshipApplications = JSON.parse(localStorage.getItem('apws_scholarships')) || [];
+
+    function saveNotices() { localStorage.setItem('apws_notices', JSON.stringify(notices)); }
+    function saveComplaints() { localStorage.setItem('apws_complaints', JSON.stringify(complaints)); }
+    function saveScholarships() { localStorage.setItem('apws_scholarships', JSON.stringify(scholarshipApplications)); }
+
+    // PAGE NAVIGATION
+    function showPage(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('page-' + page);
+      if (target) target.classList.add('active');
+
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      const nav = document.getElementById('nav-' + page);
+      if (nav) nav.classList.add('active');
+
+      if (page === 'notices') renderNotices();
+      if (page === 'about') renderLeadership();
+      if (page === 'gallery') renderGallery();
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast px-5 py-3 rounded-2xl text-white text-sm mb-2 ${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'}`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
+    }
+
+    // RENDER
+    function renderNotices() {
+      const container = document.getElementById('noticesList');
+      container.innerHTML = '';
+      notices.forEach(n => {
+        const card = document.createElement('div');
+        card.className = 'bg-white border rounded-3xl p-6';
+
+        let attachmentHTML = '';
+        if (n.fileData) {
+          if (n.fileType && n.fileType.startsWith('image/')) {
+            attachmentHTML = `
+              <div class="mt-4">
+                <img src="${n.fileData}" class="max-h-48 rounded-2xl border mb-2" alt="Attached image">
+                <a href="${n.fileData}" download="${n.fileName || 'attachment.jpg'}" 
+                   class="inline-flex items-center gap-2 text-sm text-indigo-600 hover:underline">
+                  <i class="fa-solid fa-download"></i> Download Image
+                </a>
+              </div>`;
+          } else if (n.fileType === 'application/pdf') {
+            attachmentHTML = `
+              <div class="mt-4">
+                <a href="${n.fileData}" download="${n.fileName || 'notice.pdf'}" 
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-2xl text-sm font-medium hover:bg-red-200">
+                  <i class="fa-solid fa-file-pdf"></i> Download PDF
+                </a>
+              </div>`;
+          }
+        }
+
+        card.innerHTML = `
+          <h3 class="font-bold text-xl">${n.title}</h3>
+          <p class="text-xs text-slate-400 mt-1">${n.date}</p>
+          <p class="mt-4 text-sm text-slate-600">${n.body}</p>
+          ${attachmentHTML}
+        `;
+        container.appendChild(card);
+      });
+      updateHeroStats();
+    }
+
+    function renderLeadership() {
+      const container = document.getElementById('leadershipGrid');
+      container.innerHTML = '';
+      const leaders = [
+        {name: "Shri Bihu Painchey", role: "President"},
+        {name: "Shri Sipa Yachu", role: "General Secretary"},
+        {name: "Shri Siji Nanu", role: "Vice President"},
+        {name: "Shri Rajal Haye Kuyu", role: "Asst. Gen. Secretary"},
+        {name: "Shri Taram Soja", role: "Convenor"},
+        {name: "Shri Kaduk Tanu", role: "Co-Convenor"},
+        {name: "Smt. Yano Wallong", role: "Treasurer"},
+        {name: "Shri Tabang Waru", role: "Arts & Cultural Secretary"},
+        {name: "Smt. Siji Yacher Yachu", role: "Asst. Arts & Cultural Secy."},
+        {name: "Shri Hano Paje", role: "Education & H/H Secretary"},
+        {name: "Shri Kaduk Tadit", role: "Asst. Ed. & H/H Secy."},
+        {name: "Shri Picha Taba", role: "Sports & Y/A Secretary"},
+        {name: "Shri Siji Kamey", role: "Asst. Sports & Y/A Secy."},
+        {name: "Smt. Senia Yakli", role: "Secretary, Women Affairs"},
+        {name: "Shri Asham Wallong", role: "Secretary, Labour Affairs"},
+        {name: "Shri Bishop Painchey", role: "IPR Secretary"},
+        {name: "Shri Adang Yachu", role: "Advisor Board Member"},
+        {name: "Shri Kapit Bechang", role: "Advisor Board Member"},
+        {name: "Shri Kashok Halley", role: "Advisor Board Member"},
+        {name: "Adv. Ngurang Nima", role: "Legal Advisor"}
+      ];
+      leaders.forEach(l => {
+        const card = document.createElement('div');
+        card.className = 'bg-white border rounded-3xl p-5 flex gap-4';
+        card.innerHTML = `<div class="w-10 h-10 bg-indigo-700 text-white rounded-2xl flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-user"></i></div>
+          <div><p class="font-semibold leading-tight">${l.name}</p><p class="text-xs text-indigo-600">${l.role}</p></div>`;
+        container.appendChild(card);
+      });
+    }
+
+    function renderGallery() {
+      const container = document.getElementById('galleryGrid');
+      container.innerHTML = '';
+      const items = [101,29,160,251,201,30];
+      items.forEach(id => {
+        const div = document.createElement('div');
+        div.className = 'rounded-3xl overflow-hidden aspect-video cursor-pointer';
+        div.innerHTML = `<img src="https://picsum.photos/id/${id}/600/400" class="w-full h-full object-cover">`;
+        div.onclick = () => {
+          const lb = document.createElement('div');
+          lb.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-[90]';
+          lb.innerHTML = `<img src="https://picsum.photos/id/${id}/1200/800" class="max-h-[85vh] rounded-2xl">`;
+          lb.onclick = () => lb.remove();
+          document.body.appendChild(lb);
+        };
+        container.appendChild(div);
+      });
+    }
+
+    function updateHeroStats() {
+      const n = document.getElementById('heroNoticesCount');
+      const c = document.getElementById('heroComplaintsCount');
+      const s = document.getElementById('heroScholarshipsCount');
+      if (n) n.textContent = notices.length;
+      if (c) c.textContent = complaints.length;
+      if (s) s.textContent = scholarshipApplications.length;
+    }
+
+    // ADMIN
+    function renderAdminNotices() {
+      const container = document.getElementById('adminNoticesList');
+      container.innerHTML = '';
+      notices.forEach(n => {
+        const div = document.createElement('div');
+        div.className = 'bg-white border rounded-2xl p-4';
+
+        let fileInfo = '';
+        if (n.fileName) {
+          fileInfo = `<div class="text-xs text-emerald-600 mt-1"><i class="fa-solid fa-paperclip"></i> ${n.fileName}</div>`;
+        }
+
+        div.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="font-semibold">${n.title}</div>
+              <div class="text-xs text-slate-400">${n.date}</div>
+              ${fileInfo}
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+              <button onclick="editNotice(${n.id})" class="text-xs px-3 py-1 border rounded-xl hover:bg-slate-50">Edit</button>
+              <button onclick="deleteNotice(${n.id})" class="text-xs px-3 py-1 border text-red-500 rounded-xl hover:bg-red-50">Delete</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderAdminComplaints() {
+      const container = document.getElementById('adminComplaintsList');
+      container.innerHTML = '';
+      complaints.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'bg-white border rounded-2xl p-4';
+        div.innerHTML = `
+          <div class="flex justify-between">
+            <div><span class="text-xs bg-red-100 px-2 rounded">${c.type}</span> <span class="font-medium">${c.name} • ${c.village}</span></div>
+            <select onchange="updateComplaintStatus(${c.id}, this.value)" class="text-xs border rounded px-2">
+              <option ${c.status==='Received'?'selected':''}>Received</option>
+              <option ${c.status==='Under Review'?'selected':''}>Under Review</option>
+              <option ${c.status==='Resolved'?'selected':''}>Resolved</option>
+            </select>
+          </div>
+          <p class="text-sm mt-2">${c.description}</p>
+          <button onclick="deleteComplaint(${c.id})" class="text-xs text-red-500 mt-1">Delete</button>`;
+        container.appendChild(div);
+      });
+    }
+
+    function renderAdminScholarships() {
+      const container = document.getElementById('adminScholarshipsList');
+      container.innerHTML = '';
+      scholarshipApplications.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'bg-white border rounded-2xl p-4 flex justify-between';
+        div.innerHTML = `
+          <div><span class="font-medium">${s.name}</span> <span class="text-xs">• ${s.course} • ₹${s.amount}</span></div>
+          <div>
+            <select onchange="updateScholarshipStatus(${s.id}, this.value)" class="text-xs border rounded px-2">
+              <option ${s.status==='Pending'?'selected':''}>Pending</option>
+              <option ${s.status==='Approved'?'selected':''}>Approved</option>
+              <option ${s.status==='Rejected'?'selected':''}>Rejected</option>
+            </select>
+            <button onclick="deleteScholarship(${s.id})" class="text-xs text-red-500 ml-2">Delete</button>
+          </div>`;
+        container.appendChild(div);
+      });
+    }
+
+    function updateAdminStats() {
+      const n = document.getElementById('adminNoticesCount');
+      const c = document.getElementById('complaintsCount');
+      const s = document.getElementById('scholarshipsCount');
+      if (n) n.textContent = notices.length;
+      if (c) c.textContent = complaints.length;
+      if (s) s.textContent = scholarshipApplications.length;
+    }
+
+    function renderAdminDashboard() {
+      renderAdminNotices();
+      renderAdminComplaints();
+      renderAdminScholarships();
+      updateAdminStats();
+    }
+
+    // FUNCTIONS
+    function postNewNotice() {
+      const title = document.getElementById('newNoticeTitle').value.trim();
+      const body = document.getElementById('newNoticeBody').value.trim();
+      const fileInput = document.getElementById('noticeFile');
+
+      if (!title || !body) {
+        showToast('Title and content are required', 'error');
+        return;
+      }
+
+      const newNotice = {
+        id: Date.now(),
+        title: title,
+        date: new Date().toLocaleDateString('en-IN'),
+        body: body
+      };
+
+      // If a file is selected, read it first
+      if (fileInput && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+          newNotice.fileData = e.target.result;
+          newNotice.fileName = file.name;
+          newNotice.fileType = file.type || '';
+
+          notices.unshift(newNotice);
+          saveNotices();
+          renderNotices();
+          renderAdminNotices();
+          updateAdminStats();
+
+          // Clear form
+          document.getElementById('newNoticeTitle').value = '';
+          document.getElementById('newNoticeBody').value = '';
+          fileInput.value = '';
+
+          showToast('Notice published with attachment!');
+        };
+
+        reader.onerror = function() {
+          showToast('Failed to read the file. Publishing without attachment.', 'error');
+          // Still publish without the file
+          notices.unshift(newNotice);
+          saveNotices();
+          renderNotices();
+          renderAdminNotices();
+          updateAdminStats();
+          document.getElementById('newNoticeTitle').value = '';
+          document.getElementById('newNoticeBody').value = '';
+        };
+
+        reader.readAsDataURL(file);
+      } else {
+        // No file selected - publish immediately
+        notices.unshift(newNotice);
+        saveNotices();
+        renderNotices();
+        renderAdminNotices();
+        updateAdminStats();
+
+        document.getElementById('newNoticeTitle').value = '';
+        document.getElementById('newNoticeBody').value = '';
+
+        showToast('Notice published successfully!');
+      }
+    }
+
+    let editingId = null;
+    function editNotice(id) {
+      const n = notices.find(x => x.id === id);
+      if (!n) return;
+      editingId = id;
+      document.getElementById('editNoticeId').value = id;
+      document.getElementById('editNoticeTitle').value = n.title;
+      document.getElementById('editNoticeBody').value = n.body;
+      document.getElementById('editNoticeModal').classList.remove('hidden');
+      document.getElementById('editNoticeModal').classList.add('flex');
+    }
+    function closeEditNoticeModal() {
+      document.getElementById('editNoticeModal').classList.add('hidden');
+      document.getElementById('editNoticeModal').classList.remove('flex');
+    }
+    function saveEditedNotice() {
+      const idx = notices.findIndex(x => x.id === editingId);
+      if (idx === -1) return;
+      notices[idx].title = document.getElementById('editNoticeTitle').value.trim();
+      notices[idx].body = document.getElementById('editNoticeBody').value.trim();
+      saveNotices();
+      renderNotices();
+      renderAdminNotices();
+      closeEditNoticeModal();
+      showToast('Notice updated');
+    }
+    function deleteNotice(id) {
+      if (!confirm('Delete this notice?')) return;
+      notices = notices.filter(x => x.id !== id);
+      saveNotices();
+      renderNotices();
+      renderAdminNotices();
+      updateAdminStats();
+    }
+
+    function submitComplaint(e) {
+      e.preventDefault();
+      complaints.unshift({
+        id: Date.now(),
+        name: document.getElementById('complaintName').value || 'Anonymous',
+        village: document.getElementById('complaintVillage').value,
+        type: document.getElementById('complaintType').value,
+        phone: document.getElementById('complaintPhone').value || 'N/A',
+        description: document.getElementById('complaintDesc').value,
+        status: 'Received',
+        date: new Date().toLocaleDateString('en-IN')
+      });
+      saveComplaints();
+      e.target.reset();
+      closeComplaintModal();
+      renderAdminComplaints();
+      updateAdminStats();
+      updateHeroStats();
+      showToast('Complaint submitted');
+    }
+
+    function updateComplaintStatus(id, status) {
+      const c = complaints.find(x => x.id == id);
+      if (c) { c.status = status; saveComplaints(); renderAdminComplaints(); }
+    }
+    function deleteComplaint(id) {
+      if (!confirm('Delete complaint?')) return;
+      complaints = complaints.filter(x => x.id !== id);
+      saveComplaints();
+      renderAdminComplaints();
+      updateAdminStats();
+    }
+
+    function studentLogin() {
+      document.getElementById('studentLoginView').classList.add('hidden');
+      document.getElementById('studentApplicationView').classList.remove('hidden');
+    }
+    function submitScholarshipApplication(e) {
+      e.preventDefault();
+      scholarshipApplications.unshift({
+        id: Date.now(),
+        name: document.getElementById('schName').value,
+        village: document.getElementById('schVillage').value,
+        course: document.getElementById('schCourse').value,
+        amount: document.getElementById('schAmount').value,
+        status: 'Pending',
+        date: new Date().toLocaleDateString('en-IN')
+      });
+      saveScholarships();
+      e.target.reset();
+      closeStudentModal();
+      renderAdminScholarships();
+      updateAdminStats();
+      updateHeroStats();
+      showToast('Application submitted');
+    }
+    function updateScholarshipStatus(id, status) {
+      const a = scholarshipApplications.find(x => x.id == id);
+      if (a) { a.status = status; saveScholarships(); renderAdminScholarships(); }
+    }
+    function deleteScholarship(id) {
+      if (!confirm('Delete application?')) return;
+      scholarshipApplications = scholarshipApplications.filter(x => x.id !== id);
+      saveScholarships();
+      renderAdminScholarships();
+      updateAdminStats();
+    }
+
+    // Modals
+    function openComplaintModal() { document.getElementById('complaintModal').classList.remove('hidden'); document.getElementById('complaintModal').classList.add('flex'); }
+    function closeComplaintModal() { document.getElementById('complaintModal').classList.add('hidden'); document.getElementById('complaintModal').classList.remove('flex'); }
+    function openStudentModal() { document.getElementById('studentModal').classList.remove('hidden'); document.getElementById('studentModal').classList.add('flex'); document.getElementById('studentLoginView').classList.remove('hidden'); document.getElementById('studentApplicationView').classList.add('hidden'); }
+    function closeStudentModal() { document.getElementById('studentModal').classList.add('hidden'); document.getElementById('studentModal').classList.remove('flex'); }
+    function openAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); document.getElementById('adminModal').classList.add('flex'); }
+    function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); document.getElementById('adminModal').classList.remove('flex'); }
+
+    function adminLogin() {
+      if (document.getElementById('adminUsername').value === 'admin' && document.getElementById('adminPassword').value === 'apws2026') {
+        document.getElementById('adminLoginContent').classList.add('hidden');
+        document.getElementById('adminDashboardContent').classList.remove('hidden');
+        renderAdminDashboard();
+      } else {
+        showToast('Invalid credentials. Use admin / apws2026', 'error');
+      }
+    }
+    function adminLogout() {
+      document.getElementById('adminDashboardContent').classList.add('hidden');
+      document.getElementById('adminLoginContent').classList.remove('hidden');
+    }
+
+    // INIT
+    function init() {
+      if (complaints.length === 0) {
+        complaints.push({id: Date.now()-10, name: "Anonymous", village: "Ziro", type: "Land Issue", phone: "N/A", description: "Land dispute needs attention.", status: "Under Review", date: "12 May 2026"});
+        saveComplaints();
+      }
+      if (scholarshipApplications.length === 0) {
+        scholarshipApplications.push({id: Date.now()-20, name: "Pema Lhamu", village: "Bomdila", course: "B.Sc Nursing", amount: "45000", status: "Pending", date: "09 May 2026"});
+        saveScholarships();
+      }
+
+      updateHeroStats();
+      renderNotices();
+      renderLeadership();
+      renderGallery();
+
+      showPage('home');
+    }
+
+    // Dropdown toggle functions
+    function toggleResourcesDropdown() {
+      const dropdown = document.getElementById('resourcesDropdown');
+      dropdown.classList.toggle('hidden');
+    }
+
+    function hideResourcesDropdown() {
+      const dropdown = document.getElementById('resourcesDropdown');
+      dropdown.classList.add('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      const dropdown = document.getElementById('resourcesDropdown');
+      const resourcesBtn = event.target.closest('button');
+      if (dropdown && !dropdown.contains(event.target) && (!resourcesBtn || !resourcesBtn.textContent.includes('Resources'))) {
+        dropdown.classList.add('hidden');
+      }
+    });
+
+    window.onload = init;
+  </script>
+</body>
+</html>
